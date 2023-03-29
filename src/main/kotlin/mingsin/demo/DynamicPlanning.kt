@@ -1,5 +1,6 @@
 package mingsin.demo
 
+import java.lang.Integer.max
 import java.lang.Integer.min
 
 
@@ -65,9 +66,51 @@ fun generatePascalsTriangle(numRows: Int): List<List<Int>> {
     return result
 }
 
+/**
+ * 给定一个非负整数数组 nums ，你最初位于数组的 第一个下标 。
+ *
+ * 数组中的每个元素代表你在该位置可以跳跃的最大长度。
+ *
+ * 判断你是否能够到达最后一个下标。
+ *
+ *
+ *
+ * 示例 1：
+ *
+ * 输入：nums = [2,3,1,1,4]
+ * 输出：true
+ * 解释：可以先跳 1 步，从下标 0 到达下标 1, 然后再从下标 1 跳 3 步到达最后一个下标。
+ * 示例 2：
+ *
+ * 输入：nums = [3,2,1,0,4]
+ * 输出：false
+ * 解释：无论怎样，总会到达下标为 3 的位置。但该下标的最大跳跃长度是 0 ， 所以永远不可能到达最后一个下标。
+ *
+ *
+ * 提示：
+ *
+ * 1 <= nums.length <= 3 * 104
+ * 0 <= nums[i] <= 105
+ */
+fun canJump(nums: IntArray): Boolean {
+    val dp = IntArray(nums.size) { 0 }
+    for (i in nums.indices) {
+        val k = if (i > 0) dp[i - 1] else 0
+        if (k < i) return false
+        dp[i] = max(i + nums[i], k)
+    }
+    return true
+}
+
 
 fun main() {
 
 //    println(minCostClimbingStairs(intArrayOf(1, 100, 1, 1, 1, 100, 1, 1, 100, 1)))
-    println(generatePascalsTriangle(5).map { it.toString() })
+//    println(generatePascalsTriangle(5).map { it.toString() })
+
+    println(canJump(intArrayOf(2, 3, 1, 1, 4)))
+    println(canJump(intArrayOf(3, 2, 1, 0, 4)))
+    println(canJump(intArrayOf(0)))
+    println(canJump(intArrayOf(2, 0)))
+    println(canJump(intArrayOf(2, 0, 0)))
 }
