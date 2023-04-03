@@ -346,6 +346,66 @@ fun maxSubArray(nums: IntArray): Int {
     return dp.max()
 }
 
+/**
+ * 给定一个长度为 n 的环形整数数组 nums ，返回 nums 的非空 子数组 的最大可能和 。
+ *
+ * 环形数组 意味着数组的末端将会与开头相连呈环状。形式上， nums[i] 的下一个元素是 nums[(i + 1) % n] ， nums[i] 的前一个元素是 nums[(i - 1 + n) % n] 。
+ *
+ * 子数组 最多只能包含固定缓冲区 nums 中的每个元素一次。形式上，对于子数组 nums[i], nums[i + 1], ..., nums[j] ，不存在 i <= k1, k2 <= j 其中 k1 % n == k2 % n 。
+ *
+ *
+ *
+ * 示例 1：
+ *
+ * 输入：nums = [1,-2,3,-2]
+ * 输出：3
+ * 解释：从子数组 [3] 得到最大和 3
+ * 示例 2：
+ *
+ * 输入：nums = [5,-3,5]
+ * 输出：10
+ * 解释：从子数组 [5,5] 得到最大和 5 + 5 = 10
+ * 示例 3：
+ *
+ * 输入：nums = [3,-2,2,-3]
+ * 输出：3
+ * 解释：从子数组 [3] 和 [3,-2,2] 都可以得到最大和 3
+ *
+ *
+ * 提示：
+ *
+ * n == nums.length
+ * 1 <= n <= 3 * 104
+ * -3 * 104 <= nums[i] <= 3 * 104
+ */
+fun maxSubarraySumCircular(nums: IntArray): Int {
+
+    /**
+     * 环形子数组的最大和具有两种可能，一种是不使用环的情况，另一种是使用环的情况
+     * 不使用环的情况时，直接通过53题的思路，逐步求出整个数组中的最大子序和即可
+     * 【重点】使用到了环，则必定包含 A[n-1]和 A[0]两个元素且说明从A[1]到A[n-2]这个子数组中必定包含负数 【否则只通过一趟最大子序和就可以的=得出结果】
+     * 因此只需要把A[1]-A[n-2]间这些负数的最小和求出来
+     * 用整个数组的和 sum减掉这个负数最小和即可实现原环型数组的最大和
+     * 最后再比较直接通过53题思路求出无环子序列和用sum-min的有环子序列比较大小求出整个数组的最大值即可！
+     */
+    val n = nums.size
+    var dp = nums[0]
+    var sum = dp
+    var max = dp
+
+    for (i in 1 until n) {
+        sum += nums[i]
+        dp = nums[i] + max(dp, 0)
+        max = max(dp, max)
+    }
+    var min = 0
+    for (i in 1 until n - 1) {
+        dp = nums[i] + min(dp, 0)
+        min = min(dp, min);
+    }
+    return max(max, sum - min)
+}
+
 fun main() {
 
 //    println(minCostClimbingStairs(intArrayOf(1, 100, 1, 1, 1, 100, 1, 1, 100, 1)))
@@ -364,5 +424,6 @@ fun main() {
 //    println(rob2(intArrayOf(1, 2, 3, 1)))
 //    println(deleteAndEarn(intArrayOf(1, 1, 1)))
 
-    print(maxSubArray(intArrayOf(-2, 1, -3, 4, -1, 2, 1, -5, 4)))
+    println(maxSubArray(intArrayOf(-2, 1, -3, 4, -1, 2, 1, -5, 4)))
+    println(maxSubarraySumCircular(intArrayOf(5, -3, 5)))
 }
